@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TaskRepository")
@@ -13,16 +15,34 @@ class Task
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *
+     * @Groups({"project_list"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=150)
+     *
+     * @Groups({"project_list"})
+     *
+     * @Assert\Type(type="string", message="Le nom doit être du texte")
+     * @Assert\NotNull(message="Veuillez renseigner un nom")
+     * @Assert\NotBlank(message="Le nom ne doit pas être vide")
+     * @Assert\Length(
+     *     min=2,
+     *     minMessage="Le titre doit faire plus de deux caractères"
+     * )
      */
     private $name;
 
     /**
      * @ORM\Column(type="integer")
+     *
+     * @Groups({"project_list"})
+     *
+     * @Assert\Type(type="integer", message="La priorité doit être un entier")
+     * @Assert\NotNull(message="Veuillez renseigner la priorité")
+     * @Assert\NotBlank(message="La priorité ne doit pas être vide")
      */
     private $priority;
 
@@ -38,14 +58,44 @@ class Task
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     *
+     * @Groups({"project_list"})
+     *
+     * @Assert\Type(type="string", message="Le détail doit être du texte")
      */
     private $explanation;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="tasks")
      * @ORM\JoinColumn(nullable=false)
+     *
+     * @Groups({"project_list"})
+     *
+     * @Assert\Type(type="object", message="La catégorie doit être une instance de Category")
      */
     private $category;
+
+    use Hydrate;
+
+    /**
+     * @return string
+     * @Groups({"project_list"})
+     */
+    public function getRawCreatedAt()
+    {
+        return $this->getCreatedAt()->format('j/m/Y');
+    }
+
+    /**
+     * @return string
+     * @Groups({"project_list"})
+     */
+    public function getRawDoneAt()
+    {
+        if(!is_null($this->getDoneAt())) {
+            return $this->getDoneAt()->format('j/m/Y');
+        } return null;
+    }
 
     public function getId(): ?int
     {

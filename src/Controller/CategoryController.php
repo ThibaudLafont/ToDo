@@ -163,10 +163,6 @@ class CategoryController extends AbstractController
         $this->validator = $validator;
     }
 
-    public function validate(Category $cat)
-    {
-    }
-
     /**
      * @return SerializerInterface
      */
