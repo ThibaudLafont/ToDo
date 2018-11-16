@@ -5,6 +5,8 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
@@ -15,11 +17,22 @@ class Category
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *
+     * @Groups({"category_list"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=150)
+     *
+     * @Groups({"category_list"})
+     *
+     * @Assert\NotNull(message="Veuillez renseigner un nom")
+     * @Assert\NotBlank(message="Le nom ne doit pas être vide")
+     * @Assert\Length(
+     *     min=2,
+     *     minMessage="Le titre doit faire plus de deux caractères"
+     * )
      */
     private $name;
 
@@ -27,6 +40,8 @@ class Category
      * @ORM\OneToMany(targetEntity="App\Entity\Task", mappedBy="category")
      */
     private $tasks;
+
+    use Hydrate;
 
     public function __construct()
     {
