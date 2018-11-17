@@ -35,7 +35,8 @@ class TaskController extends AbstractController
      *     "/task/{filter}",
      *     name="task_list",
      *     methods={"GET"},
-     *     requirements={"filter":"todo|is-done"})
+     *     defaults={"filter"="all"},
+     *     requirements={"filter":"all|todo|is-done"})
      *
      * @param string $filter
      * @return \Symfony\Component\HttpFoundation\JsonResponse
@@ -43,9 +44,9 @@ class TaskController extends AbstractController
     public function list(string $filter)
     {
         $rep = $this->getDoctrine()->getRepository(Task::class);
-        
+
         $tasks = null;
-        if(!isset($filter))
+        if($filter === 'all')
             $tasks = $rep->findAll();
         elseif($filter === 'todo')
             $tasks = $rep->findToDoTasks();
