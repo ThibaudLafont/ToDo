@@ -29,13 +29,29 @@ class TaskController extends AbstractController
         $this->setValidator($validator);
         $this->setSerializer($serializer);
     }
+
     /**
-     * @Route("/task", name="task_list", methods={"GET"})
+     * @Route(
+     *     "/task/{filter}",
+     *     name="task_list",
+     *     methods={"GET"},
+     *     requirements={"filter":"todo|is-done"})
+     *
+     * @param string $filter
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function list()
+    public function list(string $filter)
     {
-        $tasks = $this->getDoctrine()->getRepository(Task::class)
-            ->findAll();
+        $rep = $this->getDoctrine()->getRepository(Task::class);
+        
+        $tasks = null;
+        if(!isset($filter))
+            $tasks = $rep->findAll();
+        elseif($filter === 'todo')
+            $tasks = $rep->findToDoTasks();
+        elseif($filter === 'is-done')
+            $tasks = $rep->findDoneTasks();
+
         return $this->json($tasks, Response::HTTP_OK, [], ['groups' => ['project_list']]);
     }
 

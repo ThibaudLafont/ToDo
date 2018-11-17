@@ -18,4 +18,36 @@ class TaskRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Task::class);
     }
+
+    public function findDoneTasks() {
+        $statement = "
+            SELECT t
+            FROM App:Task t
+            WHERE t.doneAt IS NOT null
+        ";
+
+        // Execute the query and store results
+        $tasks = $this->getEntityManager()
+            ->createQuery($statement)
+            ->execute();
+
+        // Return result
+        return $tasks;
+    }
+
+    public function findToDoTasks() {
+        $statement = "
+            SELECT t
+            FROM App:Task t
+            WHERE t.doneAt IS null
+        ";
+
+        // Execute the query and store results
+        $tasks = $this->getEntityManager()
+            ->createQuery($statement)
+            ->execute();
+
+        // Return result
+        return $tasks;
+    }
 }
