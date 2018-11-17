@@ -224,7 +224,7 @@ class TaskController extends AbstractController
      * @param Task $task
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function hasToBeDone(Task $task)
+    public function toDo(Task $task)
     {
         if(!is_null($task->getDoneAt())) {
             $em = $this->getDoctrine()->getManager();
