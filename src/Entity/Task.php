@@ -97,6 +97,36 @@ class Task
         } return null;
     }
 
+    /**
+     * @return string
+     * @Groups({"project_done_list"})
+     */
+    public function getDuration(){
+        if(!is_null($this->getDoneAt())){
+            return $this->getCreatedAt()
+                ->diff(
+                    $this->getDoneAt(),
+                    true
+                )
+                ->format('%a');
+        } else{
+            return null;
+        }
+    }
+
+    /**
+     * @return string
+     * @Groups({"project_todo_list"})
+     */
+    public function getSince(){
+        return $this->getCreatedAt()
+            ->diff(
+                new \DateTime(),
+                true
+            )
+            ->format('%a');
+    }
+
     public function getId(): ?int
     {
         return $this->id;

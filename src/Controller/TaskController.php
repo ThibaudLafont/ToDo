@@ -46,14 +46,20 @@ class TaskController extends AbstractController
         $rep = $this->getDoctrine()->getRepository(Task::class);
 
         $tasks = null;
-        if($filter === 'all')
+        $groups = null;
+        if($filter === 'all'){
             $tasks = $rep->findAll();
-        elseif($filter === 'todo')
+            $groups = ['project_list', 'project_todo_list', 'project_done_list'];
+        } elseif($filter === 'todo') {
             $tasks = $rep->findToDoTasks();
-        elseif($filter === 'is-done')
-            $tasks = $rep->findDoneTasks();
+            $groups = ['project_list', 'project_todo_list'];
 
-        return $this->json($tasks, Response::HTTP_OK, [], ['groups' => ['project_list']]);
+        } elseif($filter === 'is-done') {
+            $tasks = $rep->findDoneTasks();
+            $groups = ['project_list', 'project_done_list'];
+        }
+
+        return $this->json($tasks, Response::HTTP_OK, [], ['groups' => $groups]);
     }
 
     /**
