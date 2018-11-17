@@ -16,14 +16,14 @@ class Task
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      *
-     * @Groups({"task_list"})
+     * @Groups({"task_list", "category_task_list"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=150)
      *
-     * @Groups({"task_list"})
+     * @Groups({"task_list", "category_task_list"})
      *
      * @Assert\Type(type="string", message="Le nom doit être du texte")
      * @Assert\NotNull(message="Veuillez renseigner un nom")
@@ -38,7 +38,7 @@ class Task
     /**
      * @ORM\Column(type="integer")
      *
-     * @Groups({"task_list"})
+     * @Groups({"task_list", "category_task_list"})
      *
      * @Assert\Type(type="integer", message="La priorité doit être un entier")
      * @Assert\NotNull(message="Veuillez renseigner la priorité")
@@ -59,7 +59,7 @@ class Task
     /**
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Groups({"task_list"})
+     * @Groups({"task_list", "category_task_list"})
      *
      * @Assert\Type(type="string", message="Le détail doit être du texte")
      */
@@ -79,7 +79,7 @@ class Task
 
     /**
      * @return string
-     * @Groups({"task_list"})
+     * @Groups({"task_list", "category_task_list"})
      */
     public function getRawCreatedAt()
     {
@@ -88,7 +88,7 @@ class Task
 
     /**
      * @return string
-     * @Groups({"task_list"})
+     * @Groups({"task_list", "category_task_list"})
      */
     public function getRawDoneAt()
     {
@@ -99,7 +99,7 @@ class Task
 
     /**
      * @return string
-     * @Groups({"task_list"})
+     * @Groups({"task_list", "category_task_list"})
      */
     public function getDuration(){
         if(!is_null($this->getDoneAt())){
@@ -116,7 +116,7 @@ class Task
 
     /**
      * @return string
-     * @Groups({"task_list"})
+     * @Groups({"task_list", "category_task_list"})
      */
     public function getSince(){
         return $this->getCreatedAt()

@@ -18,14 +18,14 @@ class Category
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      *
-     * @Groups({"category_list", "task_list"})
+     * @Groups({"category_list", "category_task_list"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=150)
      *
-     * @Groups({"category_list", "task_list"})
+     * @Groups({"category_list", "category_task_list"})
      *
      * @Assert\Type(type="string", message="Le nom doit être du texte")
      * @Assert\NotNull(message="Veuillez renseigner un nom")
@@ -38,6 +38,7 @@ class Category
     private $name;
 
     /**
+     * @Groups({"category_task_list"})
      * @ORM\OneToMany(targetEntity="App\Entity\Task", mappedBy="category")
      */
     private $tasks;

@@ -42,7 +42,7 @@ class CategoryController extends AbstractController
      */
     public function list(string $task)
     {
-        $context = empty($task) ? ['groups' => ['category_list']] : [];
+        $context = empty($task) ? ['groups' => ['category_list']] : ['groups' => ['category_task_list']];
         $categories = $this->getDoctrine()->getRepository(Category::class)
             ->findAll();
         return $this->json($categories, Response::HTTP_OK, [], $context);
