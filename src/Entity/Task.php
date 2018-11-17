@@ -99,7 +99,7 @@ class Task
 
     /**
      * @return string
-     * @Groups({"project_done_list"})
+     * @Groups({"project_list"})
      */
     public function getDuration(){
         if(!is_null($this->getDoneAt())){
@@ -116,7 +116,7 @@ class Task
 
     /**
      * @return string
-     * @Groups({"project_todo_list"})
+     * @Groups({"project_list"})
      */
     public function getSince(){
         return $this->getCreatedAt()

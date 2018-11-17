@@ -49,17 +49,14 @@ class TaskController extends AbstractController
         $groups = null;
         if($filter === 'all'){
             $tasks = $rep->findAll();
-            $groups = ['project_list', 'project_todo_list', 'project_done_list'];
         } elseif($filter === 'todo') {
             $tasks = $rep->findToDoTasks();
-            $groups = ['project_list', 'project_todo_list'];
 
         } elseif($filter === 'is-done') {
             $tasks = $rep->findDoneTasks();
-            $groups = ['project_list', 'project_done_list'];
         }
 
-        return $this->json($tasks, Response::HTTP_OK, [], ['groups' => $groups]);
+        return $this->json($tasks, Response::HTTP_OK, [], ['groups' => ['project_list']]);
     }
 
     /**
