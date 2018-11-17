@@ -6,9 +6,9 @@ trait Hydrate
     public function hydrate($data)
     {
         foreach($data as $key => $value) {
-            $method = 'get' . ucfirst($value);
+            $method = 'set' . ucfirst($key);
             if(method_exists($this, $method)) {
-                call_user_func($this->$method, $value);
+                $this->$method($value);
             }
         }
     }

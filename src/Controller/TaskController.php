@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\Task;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,6 +40,20 @@ class TaskController extends AbstractController
     }
 
     /**
+     * @Route("/task/{id}",
+     *     name="task_show",
+     *     methods={"GET"},
+     *     requirements={"id"="\d+"})
+     *
+     * @param Task $task
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function show(Task $task)
+    {
+        return $this->json($task, Response::HTTP_OK, [], ['groups' => ['project_list']]);
+    }
+
+    /**
      * @Route("/task/create", name="tack_create", methods={"POST"})
      *
      * @param Request $request
@@ -47,22 +62,19 @@ class TaskController extends AbstractController
     public function create(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $content = $request->getContent();
+        $content = json_decode($request->getContent(), true);
 
-        $cat = null;
-        if(isset(json_decode($content, true)['category_id'])) {
-            $cat = $em->getRepository(Category::class)->find(json_decode($content, true)['category_id']);
-        }
+        $cat = $this->getOrCreateCategory($content['cat'], $em);
 
-        if(!isset(json_decode($content, true)['category_id']) || !$cat) {
+        if(!$cat) {
             return $this->json([
                 'code' => Response::HTTP_BAD_REQUEST,
-                'message' => 'Pas de catégorie ou id incorrect'
+                'message' => 'Pas de catégorie renseignée ou id incorrect'
             ], Response::HTTP_BAD_REQUEST);
         }
 
         $task = $this->getSerializer()->deserialize(
-            $content,
+            $request->getContent(),
             Task::class,
             'json'
         );
@@ -84,10 +96,149 @@ class TaskController extends AbstractController
         ], Response::HTTP_CREATED);
     }
 
-    public function edit($id) {
+    /**
+     * @Route("/task/edit/{id}",
+     *     name="task_edit",
+     *     methods={"POST"},
+     *     requirements={"id"="\d+"})
+     *
+     * @param Request $request
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function edit(Request $request, $id) {
+        $em = $this->getDoctrine()->getManager();
+        $content = json_decode($request->getContent(), true);
 
+        $task = $em->getRepository(Task::class)->find($id);
+        if(!$task) {
+            return $this->json([
+                'code' => Response::HTTP_BAD_REQUEST,
+                'message' => 'Pas de tache trouvée avec cet id'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        if(isset($content['cat'])) {
+            $cat = $this->getOrCreateCategory($content['cat'], $em);
+
+            if(!$cat) {
+                return $this->json([
+                    'code' => Response::HTTP_BAD_REQUEST,
+                    'message' => 'Pas de catégorie renseignée ou id incorrect'
+                ], Response::HTTP_BAD_REQUEST);
+            }
+
+            $task->setCategory($cat);
+        }
+
+        $task->hydrate($content);
+        $errors = $this->getValidator()->validate($task);
+        if(count($errors)) {
+            return $this->json($errors, Response::HTTP_BAD_REQUEST);
+        }
+        $em->flush();
+
+        return $this->json([
+            'code' => Response::HTTP_OK,
+            'message' => 'La tache a bien été modifiée !',
+            'tache' => $task
+        ], Response::HTTP_OK, [], ['groups' => ['project_list']]);
     }
 
+    /**
+     * @Route("/task/delete/{id}",
+     *     name="task_delete",
+     *     methods={"GET"},
+     *     requirements={"id"="\d+"})
+     *
+     * @param Task $task
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function delete(Task $task)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($task);
+        $em->flush();
+
+        return $this->json([
+            'code' => Response::HTTP_ACCEPTED,
+            'message' => 'Tache supprimée'
+        ], Response::HTTP_ACCEPTED);
+    }
+
+    /**
+     * @Route("/task/is-done/{id}",
+     *     name="task_is_done",
+     *     methods={"GET"},
+     *     requirements={"id"="\d+"})
+     *
+     * @param Task $task
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function isDone(Task $task)
+    {
+        if(is_null($task->getDoneAt())) {
+            $em = $this->getDoctrine()->getManager();
+            $task->setDoneAt(new \DateTime());
+            $em->flush();
+
+            return $this->json([
+                'code' => Response::HTTP_OK,
+                'message' => 'Tache marquée comme terminée',
+                'Tache' => $task
+            ], Response::HTTP_OK, [], ['groups' => ['project_list']]);
+        }
+
+        return $this->json([
+            'code' => Response::HTTP_BAD_REQUEST,
+            'message' => 'Tache déjà terminée'
+        ], Response::HTTP_BAD_REQUEST, [], ['groups' => ['project_list']]);
+    }
+
+    /**
+     * @Route("/task/to-do/{id}",
+     *     name="task_to_do",
+     *     methods={"GET"},
+     *     requirements={"id"="\d+"})
+     *
+     * @param Task $task
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function hasToBeDone(Task $task)
+    {
+        if(!is_null($task->getDoneAt())) {
+            $em = $this->getDoctrine()->getManager();
+            $task->setDoneAt(null);
+            $em->flush();
+
+            return $this->json([
+                'code' => Response::HTTP_OK,
+                'message' => 'Tache marquée comme en cours',
+                'Tache' => $task
+            ], Response::HTTP_OK, [], ['groups' => ['project_list']]);
+        }
+
+        return $this->json([
+            'code' => Response::HTTP_BAD_REQUEST,
+            'message' => 'Tache déjà en cours'
+        ], Response::HTTP_BAD_REQUEST, [], ['groups' => ['project_list']]);
+    }
+
+    public function getOrCreateCategory(Array $catData, EntityManager $em)
+    {
+        $cat = null;
+        if(isset($catData['id'])) {
+            $cat = $em->getRepository(Category::class)->find($catData['id']);
+        }
+
+        if(isset($catData['name']) && !$cat) {
+            $cat = new Category();
+            $cat->setName($catData['name']);
+            $em->persist($cat);
+        }
+
+        return $cat;
+    }
 
     /**
      * @return ValidatorInterface
