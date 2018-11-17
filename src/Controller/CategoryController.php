@@ -29,14 +29,20 @@ class CategoryController extends AbstractController
     }
 
     /**
-     * @Route("/category", name="category_list", methods={"GET"})
+     * @Route(
+     *     "/category/{task}",
+     *     name="category_list",
+     *     methods={"GET"},
+     *     defaults={"task"=""},
+     *     requirements={"filter":"task"}
+     * )
      *
-     * @param Request $request
+     * @param string $task
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function list(Request $request)
+    public function list(string $task)
     {
-        $context = is_null($request->query->get('tasks')) ? ['groups' => ['category_list']] : [];
+        $context = empty($task) ? ['groups' => ['category_list']] : [];
         $categories = $this->getDoctrine()->getRepository(Category::class)
             ->findAll();
         return $this->json($categories, Response::HTTP_OK, [], $context);

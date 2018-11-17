@@ -56,7 +56,7 @@ class TaskController extends AbstractController
             $tasks = $rep->findDoneTasks();
         }
 
-        return $this->json($tasks, Response::HTTP_OK, [], ['groups' => ['project_list']]);
+        return $this->json($tasks, Response::HTTP_OK, [], ['groups' => ['task_list']]);
     }
 
     /**
@@ -70,7 +70,7 @@ class TaskController extends AbstractController
      */
     public function show(Task $task)
     {
-        return $this->json($task, Response::HTTP_OK, [], ['groups' => ['project_list']]);
+        return $this->json($task, Response::HTTP_OK, [], ['groups' => ['task_list']]);
     }
 
     /**
@@ -162,7 +162,7 @@ class TaskController extends AbstractController
             'code' => Response::HTTP_OK,
             'message' => 'La tache a bien été modifiée !',
             'tache' => $task
-        ], Response::HTTP_OK, [], ['groups' => ['project_list']]);
+        ], Response::HTTP_OK, [], ['groups' => ['task_list']]);
     }
 
     /**
@@ -206,13 +206,13 @@ class TaskController extends AbstractController
                 'code' => Response::HTTP_OK,
                 'message' => 'Tache marquée comme terminée',
                 'Tache' => $task
-            ], Response::HTTP_OK, [], ['groups' => ['project_list']]);
+            ], Response::HTTP_OK, [], ['groups' => ['task_list']]);
         }
 
         return $this->json([
             'code' => Response::HTTP_BAD_REQUEST,
             'message' => 'Tache déjà terminée'
-        ], Response::HTTP_BAD_REQUEST, [], ['groups' => ['project_list']]);
+        ], Response::HTTP_BAD_REQUEST, [], ['groups' => ['task_list']]);
     }
 
     /**
@@ -235,13 +235,13 @@ class TaskController extends AbstractController
                 'code' => Response::HTTP_OK,
                 'message' => 'Tache marquée comme en cours',
                 'Tache' => $task
-            ], Response::HTTP_OK, [], ['groups' => ['project_list']]);
+            ], Response::HTTP_OK, [], ['groups' => ['task_list']]);
         }
 
         return $this->json([
             'code' => Response::HTTP_BAD_REQUEST,
             'message' => 'Tache déjà en cours'
-        ], Response::HTTP_BAD_REQUEST, [], ['groups' => ['project_list']]);
+        ], Response::HTTP_BAD_REQUEST, [], ['groups' => ['task_list']]);
     }
 
     public function getOrCreateCategory(Array $catData, EntityManager $em)
