@@ -6,12 +6,12 @@ an authentication system when done.
 ## Routes
 ##### Category
 
-    /category            -- Lister les catégories
-    /category/task       -- Lister les catégories avec les taches
+    /category                 -- Lister les catégories
+    /category/task            -- Lister les catégories avec les taches
     
-    /category/create     -- Crée une nouvelle catégorie
-    /category/edit/{id}  -- Éditer la catégorie associée
-    /category/delete     -- Supprimer la catégorie associée
+    /category/create          -- Crée une nouvelle catégorie
+    /category/edit/{id}       -- Éditer la catégorie associée
+    /category/delete/{id}     -- Supprimer la catégorie associée
    
 ##### Tasks
 
@@ -23,5 +23,5 @@ an authentication system when done.
     /task/edit/{id}     -- Éditer la tache associée
     /task/delete        -- Supprimer la tache associée
     
-    /task/is-done/{id}  -- Éditer la tache associée comme terminée
-    /task/to-do/{id}    -- Éditer la tache associée à faire
+    /task/done/{id}  -- Éditer la tache associée comme terminée
+    /task/do/{id}    -- Éditer la tache associée à faire

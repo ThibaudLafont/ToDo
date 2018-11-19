@@ -18,14 +18,14 @@ class Category
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      *
-     * @Groups({"category_list", "category_task_list"})
+     * @Groups({"category_list", "task_list", "category_task_list"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=150)
      *
-     * @Groups({"category_list", "category_task_list"})
+     * @Groups({"category_list", "task_list", "category_task_list"})
      *
      * @Assert\Type(type="string", message="Le nom doit être du texte")
      * @Assert\NotNull(message="Veuillez renseigner un nom")
@@ -58,6 +58,19 @@ class Category
     public function getName(): ?string
     {
         return $this->name;
+    }
+
+    /**
+     * @return array
+     * @Groups({"category_list", "task_list", "category_task_list"})
+     */
+    public function getReferences()
+    {
+        return [
+            'show' => '/category/' . $this->getId(),
+            'edit' => '/category/edit/' . $this->getId(),
+            'delete' => '/category/delete/' . $this->getId()
+        ];
     }
 
     public function setName(string $name): self

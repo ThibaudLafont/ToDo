@@ -127,6 +127,20 @@ class Task
             ->format('%a');
     }
 
+    /**
+     * @return array
+     * @Groups({"task_list", "category_task_list"})
+     */
+    public function getReferences(){
+        return [
+            'show' => '/task/' . $this->getId(),
+            'edit' => '/task/edit' . $this->getId(),
+            'done' => '/task/done/' . $this->getId(),
+            'do' => '/task/do/' . $this->getId(),
+            'delete' => '/task/delete/' . $this->getId()
+        ];
+    }
+
     public function getId(): ?int
     {
         return $this->id;

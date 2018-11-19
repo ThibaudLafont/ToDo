@@ -187,7 +187,7 @@ class TaskController extends AbstractController
     }
 
     /**
-     * @Route("/task/is-done/{id}",
+     * @Route("/task/done/{id}",
      *     name="task_is_done",
      *     methods={"GET"},
      *     requirements={"id"="\d+"})
@@ -216,7 +216,7 @@ class TaskController extends AbstractController
     }
 
     /**
-     * @Route("/task/to-do/{id}",
+     * @Route("/task/do/{id}",
      *     name="task_to_do",
      *     methods={"GET"},
      *     requirements={"id"="\d+"})
